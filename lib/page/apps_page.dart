@@ -22,7 +22,7 @@ class _AppPageState extends State<AppPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("apps"),
+        title: Text("全部应用"),
       ),
       body: Center(
         child: getBody(),
@@ -31,17 +31,18 @@ class _AppPageState extends State<AppPage> {
   }
 
   loadData() async {
-    print('request data');
-    String loadRUL = "http://192.168.21.41:8080/api/apps?uuid=123";
-    http.Response response = await http.get(loadRUL);
-    print('request data');
-    print(response.body);
-    var resp = json.decode(response.body);
-    var result = resp['apps'];
-    setState(() {
-      print('request data');
-      _apps = result['apps'];
-    });
+    try {
+      String loadRUL = "http://192.168.3.15:8080/api/apps";
+      http.Response response = await http.get(loadRUL);
+      print(response.body);
+      var resp = json.decode(response.body);
+      var result = resp['result'];
+      setState(() {
+        _apps = result['apps'];
+      });
+    } catch (ex) {
+      print("error: " + ex.toString());
+    }
   }
 
   getBody() {
@@ -58,6 +59,11 @@ class _AppPageState extends State<AppPage> {
   }
 
   getItem(var app) {
+    String icon = app["Icon"];
+    if (icon == null || icon.isEmpty) {
+      icon ='http://192.168.3.15:8080/api/resource/app/downloads/icon_default.png';
+    }
+    double size = app['Size']/1024/1024;
     var row = Container(
       margin: EdgeInsets.all(4.0),
       child: Row(
@@ -65,20 +71,19 @@ class _AppPageState extends State<AppPage> {
           ClipRRect(
             borderRadius: BorderRadius.circular(4.0),
             child: Image.network(
-              app['Icon'],
-              width: 100.0,
-              height: 150.0,
-              fit: BoxFit.fill,
+              icon,
+              width: 60.0,
+              height: 60.0,
+              fit: BoxFit.scaleDown,
             ),
           ),
-          Expanded(
-              child: Container(
-            margin: EdgeInsets.only(left: 8.0),
-            height: 150.0,
-            child: Column(
+          Container(
+            margin: EdgeInsets.only(left: 20.0),
+            //height: 150.0,
+            child: Center(
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-//                    电影名称
                 Text(
                   app['Name'],
                   style: TextStyle(
@@ -87,14 +92,13 @@ class _AppPageState extends State<AppPage> {
                   ),
                   maxLines: 1,
                 ),
-//                    豆瓣评分
                 Text(
-                  app['Version'],
+                  app['Version']+'    '+size.toStringAsFixed(2)+"MB",
                   style: TextStyle(fontSize: 16.0),
                 ),
               ],
-            ),
-          ))
+            )),
+          )
         ],
       ),
     );

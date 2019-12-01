@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_app/page/apps_page.dart';
 import 'package:groovin_material_icons/groovin_material_icons.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   @override
@@ -31,27 +36,30 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
         body: Form(
             key: _formKey,
-            child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: 22.0),
-              children: <Widget>[
-                SizedBox(
-                  height: kToolbarHeight,
-                ),
-                buildTitle(),
-                buildTitleLine(),
-                SizedBox(height: 70.0),
-                buildUsernameTextField(),
-                SizedBox(height: 30.0),
-                buildPasswordTextField(context),
-                buildForgetPasswordText(context),
-                SizedBox(height: 60.0),
-                buildLoginButton(context),
-                SizedBox(height: 30.0),
-                buildOtherLoginText(),
-                buildOtherMethod(context),
-                buildRegisterText(context),
-              ],
-            )));
+            child: Center(
+                child: Container(
+                    constraints: BoxConstraints(maxWidth: 600),
+                    child: ListView(
+                      padding: EdgeInsets.symmetric(horizontal: 22.0),
+                      children: <Widget>[
+                        SizedBox(
+                          height: kToolbarHeight,
+                        ),
+                        buildTitle(),
+                        //buildTitleLine(),
+                        SizedBox(height: 70.0),
+                        buildUsernameTextField(),
+                        SizedBox(height: 30.0),
+                        buildPasswordTextField(context),
+                        buildForgetPasswordText(context),
+                        SizedBox(height: 60.0),
+                        buildLoginButton(context),
+                        SizedBox(height: 30.0),
+                        buildOtherLoginText(),
+                        buildOtherMethod(context),
+                        buildRegisterText(context),
+                      ],
+                    )))));
   }
 
   Align buildRegisterText(BuildContext context) {
@@ -130,13 +138,31 @@ class _LoginPageState extends State<LoginPage> {
               ///只有输入的内容符合要求通过才会到达此处
               _formKey.currentState.save();
               //TODO 执行登录方法
-              print('email:$_username , password:$_password');
+              print('username:$_username , password:$_password');
+              doLogin();
             }
           },
           shape: StadiumBorder(side: BorderSide()),
         ),
       ),
     );
+  }
+
+  doLogin() async {
+    try {
+      String loadRUL = "http://192.168.3.15:8080/api/apps";
+      http.Response resp = await http.get(loadRUL);
+      if (resp.statusCode == 200) {
+        Storage storge = window.localStorage;
+        storge['token'] = 'a123456';
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+          return AppPage();
+        }));
+      }
+      var result = json.decode(resp.body);
+    } catch (ex) {
+      print("error: " + ex.toString());
+    }
   }
 
   Padding buildForgetPasswordText(BuildContext context) {
@@ -214,12 +240,13 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Padding buildTitle() {
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        'Login',
-        style: TextStyle(fontSize: 42.0),
+  Align buildTitle() {
+    return Center(
+      child: Image.asset(
+        'images/app_store1.png',
+        width: 160.0,
+        height: 160.0,
+        fit: BoxFit.scaleDown,
       ),
     );
   }

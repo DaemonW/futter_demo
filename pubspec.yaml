@@ -57,11 +57,9 @@ flutter:
   #  - images/a_dot_ham.jpeg
   assets:
     - images/
-    - images/pic1.jpg
-    - images/pic2.jpg
-    - images/pic3.jpg
-    - images/jay.jpg
-    - images/beauty.jpg
+    - images/app_store.png
+    - images/app_store1.png
+    - images/icon_default.png
     - lib/locale/i18n_en.json
     - lib/locale/i18n_zh.json
   # An image asset can refer to one or more resolution-specific "variants", see
