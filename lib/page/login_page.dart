@@ -3,8 +3,10 @@ import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/page/apps_page.dart';
+import 'package:flutter_app/widget/toast.dart' as toast;
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -139,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
               _formKey.currentState.save();
               //TODO 执行登录方法
               print('username:$_username , password:$_password');
-              doLogin();
+              doLogin(_username, _password);
             }
           },
           shape: StadiumBorder(side: BorderSide()),
@@ -148,18 +150,30 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  doLogin() async {
+  doLogin(String username, String password) async {
     try {
-      String loadRUL = "http://192.168.3.15:8080/api/apps";
-      http.Response resp = await http.get(loadRUL);
+      //String loadRUL = "http://192.168.21.41:8080/api/tokens";
+      //http.Response resp = await http.get(loadRUL);
+      Map<String, String> header = {"Content-Type": "application/json"};
+      var content = json.encode({"username": username, "password": password});
+      final resp = await http.post(
+        "http://192.168.21.41:8080/api/tokens",
+        body: content,
+        headers: header,
+      );
       if (resp.statusCode == 200) {
         Storage storge = window.localStorage;
         storge['token'] = 'a123456';
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
           return AppPage();
         }));
+      } else {
+        var result = json.decode(resp.body);
+        var errMsg = result['err'];
+        print(errMsg);
+        toast.Toast.toast(context, errMsg['msg']);
       }
-      var result = json.decode(resp.body);
     } catch (ex) {
       print("error: " + ex.toString());
     }
@@ -216,8 +230,8 @@ class _LoginPageState extends State<LoginPage> {
         labelText: 'Username',
       ),
       validator: (String value) {
-        var emailReg = RegExp(
-            r"[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?");
+        var emailReg = RegExp(r"^[a-zA-Z0-9]{5,18}");
+        //r"[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?");
         if (!emailReg.hasMatch(value)) {
           return '请输入正确的用户名';
         }
