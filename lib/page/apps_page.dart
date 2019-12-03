@@ -70,7 +70,7 @@ class _AppPageState extends State<AppPage> {
   loadData() async {
     try {
       print('load data');
-      String loadRUL = "http://192.168.21.41:8080/api/apps?uuid=123";
+      String loadRUL = "http://192.168.3.15:8080/api/apps?uuid=123";
       http.Response response = await http.get(loadRUL);
       print(response.body);
       var resp = json.decode(response.body);

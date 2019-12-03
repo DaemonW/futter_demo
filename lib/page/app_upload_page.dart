@@ -194,7 +194,7 @@ class _AppUploadState extends State<AppUploadPage> {
     MsgResponse resp;
     try {
       resp = await HttpUtil.httpUploadFile(
-          "http://192.168.21.41:8080/api/admin/apps?", _apk,
+          "http://192.168.3.15:8080/api/admin/apps?", _apk,
           file_contentType: 'application/vnd.android.package-archive');
       print('responce code = ${resp.statusCode}');
     } catch (e) {

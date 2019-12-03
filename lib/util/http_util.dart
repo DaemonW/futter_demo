@@ -52,7 +52,7 @@ class HttpUtil {
     final File file, {
     String accept = "*/*",
     String token,
-    String field = "picture-upload",
+    String field = "apk",
     String file_contentType, // 默认为null，自动获取
   }) async {
     try {
@@ -79,7 +79,7 @@ class HttpUtil {
     final List<int> filedata, {
     String accept = "*/*",
     String token,
-    String field = "picture-upload",
+    String field = "apk",
     String file_contentType, // 默认为null，自动获取
     String filename,
   }) async {
