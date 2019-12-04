@@ -6,7 +6,7 @@ import 'package:flutter_app/page/apps_page.dart';
 import 'package:flutter_app/widget/toast.dart' as toast;
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:http/http.dart' as http;
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_app/config/config.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -152,12 +152,10 @@ class _LoginPageState extends State<LoginPage> {
 
   doLogin(String username, String password) async {
     try {
-      //String loadRUL = "http://192.168.21.41:8080/api/tokens";
-      //http.Response resp = await http.get(loadRUL);
       Map<String, String> header = {"Content-Type": "application/json"};
       var content = json.encode({"username": username, "password": password});
       final resp = await http.post(
-        "http://192.168.3.15:8080/api/tokens",
+        Config.getInstance().endPointLogin,
         body: content,
         headers: header,
       );

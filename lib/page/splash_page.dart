@@ -48,7 +48,6 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<String> getToken() async {
-    print("get token");
     Storage storage = window.localStorage;
     return storage['token'];
   }

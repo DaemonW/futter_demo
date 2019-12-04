@@ -1,14 +1,14 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_app/config/config.dart';
+import 'package:flutter_app/page/apk_res.dart';
 import 'package:flutter_app/util/http_util.dart';
+import 'package:flutter_app/widget/loading_dialog.dart';
 import 'package:flutter_app/widget/toast.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart' as parser;
 
 class AppUploadPage extends StatefulWidget {
   @override
@@ -19,6 +19,7 @@ class AppUploadPage extends StatefulWidget {
 }
 
 class _AppUploadState extends State<AppUploadPage> {
+  bool _loading = false;
   String _appName = '';
   File _apk;
   Uint8List _icon;
@@ -29,76 +30,92 @@ class _AppUploadState extends State<AppUploadPage> {
     return Scaffold(
         appBar:
             AppBar(title: Text('Upload App'), automaticallyImplyLeading: false),
-        body: Center(
-          child: Container(
-            alignment: Alignment.center,
-            width: 600,
-            height: 400,
-            decoration: ShapeDecoration(
-                color: Color(0xFFFFFFFF),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ))),
-            margin: const EdgeInsets.all(12.0),
-            child: Center(
-              child: Row(
+        body: pageContent());
+  }
+
+  Widget pageContent() {
+    if (_loading) {
+      return ProgressDialog(
+        loading: _loading,
+        msg: '正在加载...',
+        child: Center(
+          child: RaisedButton(
+            onPressed: () {},
+            child: Text('显示加载动画'),
+          ),
+        ),
+      );
+    }
+    return Center(
+      child: Container(
+        alignment: Alignment.center,
+        width: 600,
+        height: 400,
+        decoration: ShapeDecoration(
+            color: Color(0xFFFFFFFF),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+              Radius.circular(8.0),
+            ))),
+        margin: const EdgeInsets.all(12.0),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Text('App Name: '),
-                      getIcon(),
-                      Text('Encrypted App'),
-                      RaisedButton(
-                        child: Text('Cancel'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 200,
-                        height: 30,
-                        child: TextField(
-                          onChanged: (String value) => _appName = value,
-                          controller: TextEditingController.fromValue(
-                              TextEditingValue(text: _appName)),
-                        ),
-                      ),
-                      RaisedButton(
-                        child: getApkFileName(),
-                        onPressed: () {
-                          //selectIcon();
-                          selectApk();
-                        },
-                      ),
-                      Checkbox(
-                        value: _encrypted,
-                        onChanged: (v) {
-                          setState(() {
-                            _encrypted = v;
-                          });
-                        },
-                      ),
-                      RaisedButton(
-                        child: Text('Confirm'),
-                        onPressed: () {
-                          uploadApp();
-                        },
-                      ),
-                    ],
+                  Text('App Name: '),
+                  getIcon(),
+                  Text('Encrypted App'),
+                  RaisedButton(
+                    child: Text('Cancel'),
+                    onPressed: () {
+                      Navigator.of(context).pop(context);
+                    },
                   ),
                 ],
               ),
-            ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  SizedBox(
+                    width: 200,
+                    height: 30,
+                    child: TextField(
+                      onChanged: (String value) => _appName = value,
+                      controller: TextEditingController.fromValue(
+                          TextEditingValue(text: _appName)),
+                    ),
+                  ),
+                  RaisedButton(
+                    child: getApkFileName(),
+                    onPressed: () {
+                      //selectIcon();
+                      selectApk();
+                    },
+                  ),
+                  Checkbox(
+                    value: _encrypted,
+                    onChanged: (v) {
+                      setState(() {
+                        _encrypted = v;
+                      });
+                    },
+                  ),
+                  RaisedButton(
+                    child: Text('Confirm'),
+                    onPressed: () {
+                      uploadApp();
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget getApkFileName() {
@@ -181,7 +198,7 @@ class _AppUploadState extends State<AppUploadPage> {
     //return completer.future;
   }
 
-  uploadApp() async {
+  uploadApp() {
     if (_appName == null || _appName.isEmpty) {
       Toast.toast(context, 'empty app name!');
       return;
@@ -191,14 +208,41 @@ class _AppUploadState extends State<AppUploadPage> {
       return;
     }
     Navigator.of(context).pop();
+  }
+
+  uploadApp1() async {
+    if (_appName == null || _appName.isEmpty) {
+      Toast.toast(context, 'empty app name!');
+      return;
+    }
+    if (_apk == null) {
+      Toast.toast(context, 'you need to select an apk file!');
+      return;
+    }
     MsgResponse resp;
+    String uploadResult;
     try {
-      resp = await HttpUtil.httpUploadFile(
-          "http://192.168.3.15:8080/api/admin/apps?", _apk,
-          file_contentType: 'application/vnd.android.package-archive');
-      print('responce code = ${resp.statusCode}');
+      setState(() {
+        _loading = true;
+      });
+      Map<String, String> formParams = {
+        'app_name': '_appName',
+        'encrypted': '1'
+      };
+      List<FilePart> formFiles = List.from([FilePart('apk', "test.apk", _apk)]);
+      resp = await HttpUtil.httpUploadMultiPartFileData(
+          Config.getInstance().endPointManageApp, null, formParams, formFiles);
+      if (resp.statusCode == 200) {
+        uploadResult = 'upload app success';
+      } else {
+        var content = json.decode(resp.data);
+        var err = content['err'];
+        uploadResult = err['msg'];
+      }
     } catch (e) {
-      print(e.toString());
+      uploadResult = 'uploadApp: ' + e.toString();
+    } finally {
+      //Navigator.of(context).pop(uploadResult);
     }
   }
 }

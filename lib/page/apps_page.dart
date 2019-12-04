@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/page/app_dialog.dart';
-import 'package:flutter_app/widget/custom_dialog.dart';
+import 'package:flutter_app/widget/toast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:file_picker/file_picker.dart';
 import 'dart:html';
 import 'dart:async';
+import 'package:flutter_app/config/config.dart';
 
 class AppPage extends StatefulWidget {
   @override
@@ -69,15 +69,18 @@ class _AppPageState extends State<AppPage> {
 
   loadData() async {
     try {
-      print('load data');
-      String loadRUL = "http://192.168.3.15:8080/api/apps?uuid=123";
+      String loadRUL = Config.getInstance().endPointQueryApps + '?uuid=123';
       http.Response response = await http.get(loadRUL);
-      print(response.body);
       var resp = json.decode(response.body);
-      var result = resp['result'];
-      setState(() {
-        _apps = result['apps'];
-      });
+      if (response.statusCode == 200) {
+        var result = resp['result'];
+        setState(() {
+          _apps = result['apps'];
+        });
+      } else {
+        var err = resp['err'];
+        Toast.toast(context, err['msg']);
+      }
     } catch (ex) {
       print("error: " + ex.toString());
     }
@@ -101,14 +104,13 @@ class _AppPageState extends State<AppPage> {
     return completer.future;
   }
 
-  showUploadDialog(){
+  showUploadDialog() {
     showDialog(
-      context:context,
-      barrierDismissible: false,
-      builder: (_){
+        context: context,
+        barrierDismissible: false,
+        builder: (_) {
           return AppDialog();
-      }
-    );
+        });
   }
 
   getBody() {
@@ -127,8 +129,7 @@ class _AppPageState extends State<AppPage> {
   getItem(var app) {
     String icon = app["Icon"];
     if (icon == null || icon.isEmpty) {
-      icon =
-          'http://192.168.3.15:8080/api/resource/app/downloads/icon_default.png';
+      icon = Config.getInstance().endPointDownloads + '/icon_default.png';
     }
     double size = app['Size'] / 1024 / 1024;
     var row = Container(
