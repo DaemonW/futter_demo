@@ -1,13 +1,9 @@
-import 'dart:convert';
 import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app/config/config.dart';
 import 'package:flutter_app/page/apk_res.dart';
-import 'package:flutter_app/util/http_util.dart';
-import 'package:flutter_app/widget/loading_dialog.dart';
 import 'package:flutter_app/widget/toast.dart';
 
 class AppUploadPage extends StatefulWidget {
@@ -19,14 +15,35 @@ class AppUploadPage extends StatefulWidget {
 }
 
 class _AppUploadState extends State<AppUploadPage> {
-  bool _loading = false;
   String _appName = '';
   File _apk;
-  Uint8List _icon;
+  File _icon;
+  Uint8List _iconData;
   bool _encrypted = false;
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    return new Material(
+      //创建透明层
+      type: MaterialType.transparency, //透明类型
+      child: Center(
+        child: Container(
+            alignment: Alignment.center,
+            width: 600,
+            height: 400,
+            decoration: ShapeDecoration(
+                color: Color(0xFFFFFFFF),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                  Radius.circular(8.0),
+                ))),
+            margin: const EdgeInsets.all(12.0),
+            child: Scaffold(
+                appBar: AppBar(
+                    title: Text('Upload App'),
+                    automaticallyImplyLeading: false),
+                body: pageContent())),
+      ),
+    );
     return Scaffold(
         appBar:
             AppBar(title: Text('Upload App'), automaticallyImplyLeading: false),
@@ -34,18 +51,6 @@ class _AppUploadState extends State<AppUploadPage> {
   }
 
   Widget pageContent() {
-    if (_loading) {
-      return ProgressDialog(
-        loading: _loading,
-        msg: '正在加载...',
-        child: Center(
-          child: RaisedButton(
-            onPressed: () {},
-            child: Text('显示加载动画'),
-          ),
-        ),
-      );
-    }
     return Center(
       child: Container(
         alignment: Alignment.center,
@@ -71,7 +76,7 @@ class _AppUploadState extends State<AppUploadPage> {
                   RaisedButton(
                     child: Text('Cancel'),
                     onPressed: () {
-                      Navigator.of(context).pop(context);
+                      Navigator.of(context).pop(null);
                     },
                   ),
                 ],
@@ -106,7 +111,7 @@ class _AppUploadState extends State<AppUploadPage> {
                   RaisedButton(
                     child: Text('Confirm'),
                     onPressed: () {
-                      uploadApp();
+                      checkSelect();
                     },
                   ),
                 ],
@@ -127,9 +132,9 @@ class _AppUploadState extends State<AppUploadPage> {
 
   Widget getIcon() {
     Image icon;
-    if (_icon != null) {
+    if (_iconData != null) {
       icon = Image.memory(
-        _icon,
+        _iconData,
         width: 60,
         height: 60,
         fit: BoxFit.scaleDown,
@@ -158,20 +163,22 @@ class _AppUploadState extends State<AppUploadPage> {
       ..accept = 'image/*';
     input.onChange.listen((e) async {
       final List<File> files = input.files;
+      if (files == null || files.length == 0) {
+        return;
+      }
       final reader = new FileReader();
       reader.readAsArrayBuffer(files[0]);
       reader.onError.listen((error) => print(error.toString()));
       await reader.onLoad.first;
       //completer.complete(input.value);
-      if (input.files.length > 0) {
-        setState(() {
-          try {
-            _icon = new Uint8List.fromList(reader.result);
-          } catch (ex) {
-            print(ex.toString());
-          }
-        });
-      }
+      _icon = input.files[0];
+      setState(() {
+        try {
+          _iconData = new Uint8List.fromList(reader.result);
+        } catch (ex) {
+          print(ex.toString());
+        }
+      });
     });
     input.click();
     //return completer.future;
@@ -198,7 +205,7 @@ class _AppUploadState extends State<AppUploadPage> {
     //return completer.future;
   }
 
-  uploadApp() {
+  checkSelect() {
     if (_appName == null || _appName.isEmpty) {
       Toast.toast(context, 'empty app name!');
       return;
@@ -207,42 +214,7 @@ class _AppUploadState extends State<AppUploadPage> {
       Toast.toast(context, 'you need to select an apk file!');
       return;
     }
-    Navigator.of(context).pop();
-  }
-
-  uploadApp1() async {
-    if (_appName == null || _appName.isEmpty) {
-      Toast.toast(context, 'empty app name!');
-      return;
-    }
-    if (_apk == null) {
-      Toast.toast(context, 'you need to select an apk file!');
-      return;
-    }
-    MsgResponse resp;
-    String uploadResult;
-    try {
-      setState(() {
-        _loading = true;
-      });
-      Map<String, String> formParams = {
-        'app_name': '_appName',
-        'encrypted': '1'
-      };
-      List<FilePart> formFiles = List.from([FilePart('apk', "test.apk", _apk)]);
-      resp = await HttpUtil.httpUploadMultiPartFileData(
-          Config.getInstance().endPointManageApp, null, formParams, formFiles);
-      if (resp.statusCode == 200) {
-        uploadResult = 'upload app success';
-      } else {
-        var content = json.decode(resp.data);
-        var err = content['err'];
-        uploadResult = err['msg'];
-      }
-    } catch (e) {
-      uploadResult = 'uploadApp: ' + e.toString();
-    } finally {
-      //Navigator.of(context).pop(uploadResult);
-    }
+    ApkRes apk = new ApkRes(_apk, _icon, _appName, _encrypted);
+    Navigator.of(context).pop(apk);
   }
 }

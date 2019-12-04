@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/event/even_bus.dart';
+import 'package:flutter_app/page/apk_res.dart';
 import 'package:flutter_app/page/app_dialog.dart';
+import 'package:flutter_app/page/app_upload_page.dart';
+import 'package:flutter_app/util/http_util.dart';
+import 'package:flutter_app/widget/loading_dialog.dart';
 import 'package:flutter_app/widget/toast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -17,6 +22,7 @@ class AppPage extends StatefulWidget {
 
 class _AppPageState extends State<AppPage> {
   List _apps = [];
+  bool _loading = false;
 
   @override
   void initState() {
@@ -25,7 +31,7 @@ class _AppPageState extends State<AppPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    Widget content = Scaffold(
       appBar: AppBar(
         title: Text("全部应用"),
       ),
@@ -42,18 +48,8 @@ class _AppPageState extends State<AppPage> {
           elevation: 7.0,
           highlightElevation: 14.0,
           onPressed: () {
-            // Scaffold.of(context).showSnackBar(new SnackBar(
-            //   content: new Text("FAB is Clicked"),
-            // ));
             try {
-              // getFile().then((path) {
-              //   if (path.isNotEmpty) {
-              //     print('select path = $path');
-              //   } else {
-              //     print('error');
-              //   }
-              // });
-              showUploadDialog();
+              goAppUploadPage();
             } catch (ex) {
               print('select file error: ' + ex.toString());
             }
@@ -64,6 +60,11 @@ class _AppPageState extends State<AppPage> {
         );
       }),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+    return ProgressDialog(
+      loading: _loading,
+      msg: "uploading...",
+      child: content,
     );
   }
 
@@ -111,6 +112,18 @@ class _AppPageState extends State<AppPage> {
         builder: (_) {
           return AppDialog();
         });
+  }
+
+  goAppUploadPage() async {
+    final ApkRes selectApk = await Navigator.of(context).push(PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return AppUploadPage();
+        }));
+        print("select apk");
+    if (selectApk != null) {
+      uploadApp(selectApk);
+    }
   }
 
   getBody() {
@@ -173,5 +186,45 @@ class _AppPageState extends State<AppPage> {
     return Card(
       child: row,
     );
+  }
+
+  uploadApp(ApkRes apk) async {
+    if (apk.name == null || apk.name.isEmpty) {
+      Toast.toast(context, 'empty app name!');
+      return;
+    }
+    if (apk.apkFile == null) {
+      Toast.toast(context, 'you need to select an apk file!');
+      return;
+    }
+    MsgResponse resp;
+    String uploadResult;
+    try {
+      setState(() {
+        _loading = true;
+      });
+      Map<String, String> formParams = {
+        'app_name': '_appName',
+        'encrypted': '1'
+      };
+      List<FilePart> formFiles =
+          List.from([FilePart('apk', apk.name, apk.apkFile)]);
+      resp = await HttpUtil.httpUploadMultiPartFileData(
+          Config.getInstance().endPointManageApp, null, formParams, formFiles);
+      if (resp.statusCode == 200) {
+        uploadResult = 'upload app success';
+      } else {
+        var content = json.decode(resp.data);
+        var err = content['err'];
+        uploadResult = err['msg'];
+      }
+    } catch (e) {
+      uploadResult = 'uploadApp: ' + e.toString();
+    } finally {
+      setState(() {
+        _loading = false;
+      });
+      Toast.toast(context, uploadResult);
+    }
   }
 }

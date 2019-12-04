@@ -1,15 +1,15 @@
 import 'dart:html';
 
 class ApkRes {
-  File icon;
-  File apk;
+  File iconFile;
+  File apkFile;
   bool encrypted;
   String name;
 
-  ApkRes(File apk, {File icon, String name, bool encrypted}) {
-    this.apk = apk;
+  ApkRes(File apk, File icon, String name, bool encrypted) {
+    this.apkFile = apk;
     this.name = name;
-    this.icon = icon;
+    this.iconFile = icon;
     this.encrypted = encrypted;
   }
 }

@@ -56,9 +56,9 @@ class _LoginPageState extends State<LoginPage> {
                         buildForgetPasswordText(context),
                         SizedBox(height: 60.0),
                         buildLoginButton(context),
-                        SizedBox(height: 30.0),
-                        buildOtherLoginText(),
-                        buildOtherMethod(context),
+                        //SizedBox(height: 30.0),
+                        //buildOtherLoginText(),
+                        //buildOtherMethod(context),
                         buildRegisterText(context),
                       ],
                     )))));
