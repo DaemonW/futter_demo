@@ -22,28 +22,6 @@ class _AppUploadState extends State<AppUploadPage> {
   bool _encrypted = false;
   @override
   Widget build(BuildContext context) {
-    return new Material(
-      //创建透明层
-      type: MaterialType.transparency, //透明类型
-      child: Center(
-        child: Container(
-            alignment: Alignment.center,
-            width: 600,
-            height: 400,
-            decoration: ShapeDecoration(
-                color: Color(0xFFFFFFFF),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                  Radius.circular(8.0),
-                ))),
-            margin: const EdgeInsets.all(12.0),
-            child: Scaffold(
-                appBar: AppBar(
-                    title: Text('Upload App'),
-                    automaticallyImplyLeading: false),
-                body: pageContent())),
-      ),
-    );
     return Scaffold(
         appBar:
             AppBar(title: Text('Upload App'), automaticallyImplyLeading: false),
@@ -54,10 +32,8 @@ class _AppUploadState extends State<AppUploadPage> {
     return Center(
       child: Container(
         alignment: Alignment.center,
-        width: 600,
-        height: 400,
         decoration: ShapeDecoration(
-            color: Color(0xFFFFFFFF),
+            //color: Color(0xFFFFFFFF),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
               Radius.circular(8.0),

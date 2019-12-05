@@ -10,15 +10,15 @@ class AppDialog extends Dialog {
       child: Center(
         child: Container(
           alignment: Alignment.center,
-          width: 600,
-          height: 400,
+          width: 500,
+          height: 300,
           decoration: ShapeDecoration(
               color: Color(0xFFFFFFFF),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
                 Radius.circular(8.0),
               ))),
-          margin: const EdgeInsets.all(12.0),
+          //margin: const EdgeInsets.all(12.0),
           child: AppUploadPage()
         ),
       ),

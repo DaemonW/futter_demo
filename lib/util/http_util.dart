@@ -5,74 +5,89 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class HttpUtil {
-  static Map _makeHttpHeaders(
-      [String contentType,
-      String accept,
-      String token,
-      String xRequestWith,
-      String xMethodOverride]) {
-    Map headers = new Map<String, String>();
-    int i = 0;
+  static Future<html.HttpRequest> request(String url,
+      {String method,
+      bool withCredentials,
+      String responseType,
+      String mimeType,
+      Map<String, String> requestHeaders,
+      sendData,
+      void onProgress(html.ProgressEvent e)}) {
+    var completer = new Completer<html.HttpRequest>();
 
-    if (!isEmptyStr(contentType)) {
-      i++;
-      headers["Content-Type"] = contentType;
+    var xhr = new html.HttpRequest();
+    if (method == null) {
+      method = 'GET';
+    }
+    xhr.open(method, url, async: true);
+
+    if (withCredentials != null) {
+      xhr.withCredentials = withCredentials;
     }
 
-    if (!isEmptyStr(accept)) {
-      i++;
-      headers["Accept"] = accept;
+    if (responseType != null) {
+      xhr.responseType = responseType;
     }
 
-    if (!isEmptyStr(token)) {
-      i++;
-      headers["Authorization"] = "bearer " + token;
+    if (mimeType != null) {
+      xhr.overrideMimeType(mimeType);
     }
 
-    if (!isEmptyStr(xRequestWith)) {
-      i++;
-      headers["X-Requested-With"] = xRequestWith;
+    if (requestHeaders != null) {
+      requestHeaders.forEach((header, value) {
+        xhr.setRequestHeader(header, value);
+      });
     }
 
-    if (!isEmptyStr(xMethodOverride)) {
-      i++;
-      headers["X-HTTP-Method-Override"] = xMethodOverride;
+    if (onProgress != null) {
+      xhr.onProgress.listen(onProgress);
     }
 
-    if (i == 0) return null;
-    // print(headers.toString());
-    return headers;
+    xhr.onLoad.listen((e) {
+      completer.complete(xhr);
+    });
+
+    xhr.onError.listen(completer.completeError);
+
+    if (sendData != null) {
+      xhr.send(sendData);
+    } else {
+      xhr.send();
+    }
+
+    return completer.future;
   }
 
-/** HTTP POST 上传文件 */
-  static Future<MsgResponse> httpUploadFile(
-    final String url,
-    final html.File file, {
-    String accept = "*/*",
-    String token,
-    String field = "apk",
-    String contentType, // 默认为null，自动获取
-  }) async {
+  /// upload multipart data to a server
+  static Future<MsgResponse> httpUploadMultiPartFileData(
+      final String url,
+      Map<String, String> headers,
+      Map<String, String> formParams,
+      final List<FilePart> formFiles) async {
+    html.FormData body = new html.FormData();
+    if (formParams != null) {
+      formParams.forEach((String key, String val) {
+        body.append(key, val);
+      });
+    }
+    if (formFiles != null) {
+      for (int i = 0; i < formFiles.length; i++) {
+        FilePart file = formFiles[i];
+        body.appendBlob(file.field, file.file);
+      }
+    }
+    html.HttpRequest resp;
     try {
-      final reader = new html.FileReader();
-      reader.readAsArrayBuffer(file);
-      reader.onError.listen((error) => print(error.toString()));
-      await reader.onLoad.first;
-      //List<int> bytes = await file.readAsBytes();
-      List<int> bytes = Uint8List.fromList(reader.result);
-      return await httpUploadFileData(url, bytes,
-          accept: accept,
-          token: token,
-          field: field,
-          contentType: contentType,
-          filename: file.name);
+      resp = await request(url,
+          method: 'POST', requestHeaders: headers, sendData: body);
+      return new MsgResponse(resp.status, resp.responseText);
     } catch (e) {
       throw e;
     }
   }
 
   /// upload multipart data to a server
-  static Future<MsgResponse> httpUploadMultiPartFileData(
+  static Future<MsgResponse> httpUploadMultiPartFileData0(
       final String url,
       Map<String, String> headers,
       Map<String, String> formParams,
@@ -86,49 +101,7 @@ class HttpUtil {
       headers['Content-Type'] = contentType;
 
       var bytes = await makeMultipartBody(boundary, formParams, formFiles);
-      //print("bytes: \r\n" + UTF8.decode(bytes, allowMalformed: true));
-
-      http.Response response =
-          await http.post(url, headers: headers, body: bytes);
-      if (response.statusCode == 200) {
-        return new MsgResponse(response.statusCode, response.body);
-      } else
-        return new MsgResponse(response.statusCode, response.body);
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  /** HTTP POST 上传文件 */
-  static Future<MsgResponse> httpUploadFileData(
-    final String url,
-    final List<int> filedata, {
-    String accept = "*/*",
-    String token,
-    String field = "apk",
-    String contentType, // 默认为null，自动获取
-    String filename,
-  }) async {
-    try {
-      List<int> bytes = filedata;
-      var boundary = _boundaryString();
-      String contentType = 'multipart/form-data; boundary=$boundary';
-      Map headers =
-          _makeHttpHeaders(contentType, accept, token); //, "XMLHttpRequest");
-
-      // 构造文件字段数据
-      String data =
-          '--$boundary\r\nContent-Disposition: form-data; name="$field"; ' +
-              'filename="$filename"\r\nContent-Type: ' +
-              '$contentType\r\n\r\n';
-      var controller = new StreamController<List<int>>(sync: true);
-      controller.add(data.codeUnits);
-      controller.add(bytes);
-      controller.add("\r\n--$boundary--\r\n".codeUnits);
-
-      controller.close();
-      bytes = await new http.ByteStream(controller.stream).toBytes();
-      //print("bytes: \r\n" + UTF8.decode(bytes, allowMalformed: true));
+      await Future.delayed(Duration(seconds: 10)).then((v) {});
 
       http.Response response =
           await http.post(url, headers: headers, body: bytes);
@@ -174,22 +147,6 @@ class HttpUtil {
         streamController.add(bytes);
         streamController.add('\r\n'.codeUnits);
       }
-      // formFiles.forEach((FilePart file) async {
-      //   streamController.add('--$boundary\r\n'.codeUnits);
-      //   streamController.add(
-      //       'Content-Disposition: form-data; name="${file.field}"; filename="${file.file.name}"\r\n'
-      //           .codeUnits);
-      //   streamController
-      //       .add('Content-Type: ${file.file.type}\r\n\r\n'.codeUnits);
-      //   final reader = new html.FileReader();
-      //   reader.readAsArrayBuffer(file.file);
-      //   reader.onError.listen((error) => print(error.toString()));
-      //   await reader.onLoad.first;
-      //   List<int> bytes = Uint8List.fromList(reader.result);
-      //   print(reader.result);
-      //   streamController.add(bytes);
-      //   streamController.add('\r\n'.codeUnits);
-      // });
     }
     streamController.add('--$boundary--\r\n'.codeUnits);
     streamController.close();

@@ -105,24 +105,55 @@ class _AppPageState extends State<AppPage> {
     return completer.future;
   }
 
-  showUploadDialog() {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) {
+  goAppUploadPage() async {
+    final ApkRes selectApk = await Navigator.of(context).push(PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (context, animation, secondaryAnimation) {
           return AppDialog();
-        });
+        }));
+    if (selectApk != null) {
+      print('select apk: ${selectApk.apkFile.name}');
+      if (selectApk.name == null || selectApk.name.isEmpty) {
+        Toast.toast(context, 'empty app name!');
+        return;
+      }
+      if (selectApk.apkFile == null) {
+        Toast.toast(context, 'you need to select an apk file!');
+        return;
+      }
+      setState(() {
+        _loading = true;
+      });
+      await uploadApp(selectApk);
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
-  goAppUploadPage() async {
+  goAppUploadPage0() async {
     final ApkRes selectApk = await Navigator.of(context).push(PageRouteBuilder(
         opaque: false,
         pageBuilder: (context, animation, secondaryAnimation) {
           return AppUploadPage();
         }));
-        print("select apk");
     if (selectApk != null) {
-      uploadApp(selectApk);
+      print('select apk: ${selectApk.apkFile.name}');
+      if (selectApk.name == null || selectApk.name.isEmpty) {
+        Toast.toast(context, 'empty app name!');
+        return;
+      }
+      if (selectApk.apkFile == null) {
+        Toast.toast(context, 'you need to select an apk file!');
+        return;
+      }
+      setState(() {
+        _loading = true;
+      });
+      await uploadApp(selectApk);
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -140,24 +171,29 @@ class _AppPageState extends State<AppPage> {
   }
 
   getItem(var app) {
-    String icon = app["Icon"];
-    if (icon == null || icon.isEmpty) {
-      icon = Config.getInstance().endPointDownloads + '/icon_default.png';
+    Widget icon;
+    String iconUrl = app["Icon"];
+    if (iconUrl == null || iconUrl.isEmpty) {
+      icon = Image.asset(
+        'images/icon_default.png',
+        width: 60.0,
+        height: 60.0,
+        fit: BoxFit.scaleDown,
+      );
+    } else {
+      icon = Image.network(
+        iconUrl,
+        width: 60.0,
+        height: 60.0,
+        fit: BoxFit.scaleDown,
+      );
     }
     double size = app['Size'] / 1024 / 1024;
     var row = Container(
       margin: EdgeInsets.all(4.0),
       child: Row(
         children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4.0),
-            child: Image.network(
-              icon,
-              width: 60.0,
-              height: 60.0,
-              fit: BoxFit.scaleDown,
-            ),
-          ),
+          ClipRRect(borderRadius: BorderRadius.circular(4.0), child: icon),
           Container(
             margin: EdgeInsets.only(left: 20.0),
             //height: 150.0,
@@ -189,23 +225,12 @@ class _AppPageState extends State<AppPage> {
   }
 
   uploadApp(ApkRes apk) async {
-    if (apk.name == null || apk.name.isEmpty) {
-      Toast.toast(context, 'empty app name!');
-      return;
-    }
-    if (apk.apkFile == null) {
-      Toast.toast(context, 'you need to select an apk file!');
-      return;
-    }
     MsgResponse resp;
     String uploadResult;
     try {
-      setState(() {
-        _loading = true;
-      });
       Map<String, String> formParams = {
-        'app_name': '_appName',
-        'encrypted': '1'
+        'name': '${apk.name}',
+        'encrypted': '${apk.encrypted}'
       };
       List<FilePart> formFiles =
           List.from([FilePart('apk', apk.name, apk.apkFile)]);
@@ -221,9 +246,6 @@ class _AppPageState extends State<AppPage> {
     } catch (e) {
       uploadResult = 'uploadApp: ' + e.toString();
     } finally {
-      setState(() {
-        _loading = false;
-      });
       Toast.toast(context, uploadResult);
     }
   }
