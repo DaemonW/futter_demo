@@ -10,7 +10,7 @@ class AppDialog extends Dialog {
       child: Center(
         child: Container(
           alignment: Alignment.center,
-          width: 500,
+          width: 400,
           height: 300,
           decoration: ShapeDecoration(
               color: Color(0xFFFFFFFF),

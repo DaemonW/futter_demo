@@ -36,59 +36,109 @@ class _AppUploadState extends State<AppUploadPage> {
             //color: Color(0xFFFFFFFF),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
-              Radius.circular(8.0),
-            ))),
+          Radius.circular(8.0),
+        ))),
         margin: const EdgeInsets.all(12.0),
         child: Center(
-          child: Row(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Column(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Text('App Name: '),
-                  getIcon(),
-                  Text('Encrypted App'),
-                  RaisedButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      Navigator.of(context).pop(null);
-                    },
+                  Container(
+                    width: 100,
+                    height: 30,
+                    alignment: Alignment.center,
+                    child: Text('App Name: '),
                   ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  SizedBox(
+                  Container(
                     width: 200,
                     height: 30,
+                    alignment: Alignment.center,
                     child: TextField(
                       onChanged: (String value) => _appName = value,
                       controller: TextEditingController.fromValue(
                           TextEditingValue(text: _appName)),
                     ),
                   ),
-                  RaisedButton(
-                    child: getApkFileName(),
-                    onPressed: () {
-                      //selectIcon();
-                      selectApk();
-                    },
+                ],
+              ),
+              SizedBox(
+                width: 300,
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Container(
+                    width: 100,
+                    height: 60,
+                    alignment: Alignment.center,
+                    child: getIcon(),
                   ),
-                  Checkbox(
-                    value: _encrypted,
-                    onChanged: (v) {
-                      setState(() {
-                        _encrypted = v;
-                      });
-                    },
+                  Container(
+                    width: 200,
+                    height: 30,
+                    alignment: Alignment.center,
+                    child: RaisedButton(
+                      child: getApkFileName(),
+                      onPressed: () {
+                        //selectIcon();
+                        selectApk();
+                      },
+                    ),
+                  )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Container(
+                    width: 100,
+                    height: 60,
+                    alignment: Alignment.center,
+                    child: Text('Encrypted App'),
                   ),
-                  RaisedButton(
-                    child: Text('Confirm'),
-                    onPressed: () {
-                      checkSelect();
-                    },
+                  Container(
+                    width: 200,
+                    height: 60,
+                    alignment: Alignment.center,
+                    child: Checkbox(
+                      value: _encrypted,
+                      onChanged: (v) {
+                        setState(() {
+                          _encrypted = v;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Container(
+                    width: 100,
+                    height: 30,
+                    alignment: Alignment.center,
+                    child: RaisedButton(
+                      child: Text('Cancel'),
+                      onPressed: () {
+                        Navigator.of(context).pop(null);
+                      },
+                    ),
+                  ),
+                  Container(
+                    width: 200,
+                    height: 30,
+                    alignment: Alignment.center,
+                    child: RaisedButton(
+                      child: Text('Confirm'),
+                      onPressed: () {
+                        checkSelect();
+                      },
+                    ),
                   ),
                 ],
               ),
