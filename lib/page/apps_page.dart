@@ -164,16 +164,11 @@ class _AppPageState extends State<AppPage> {
   }
 
   getBody() {
-    if (_apps.length != 0) {
-      return ListView.builder(
-          itemCount: _apps.length,
-          itemBuilder: (BuildContext context, int position) {
-            return getItem(_apps[position]);
-          });
-    } else {
-      // 加载菊花
-      return CupertinoActivityIndicator();
-    }
+    return ListView.builder(
+        itemCount: _apps.length,
+        itemBuilder: (BuildContext context, int position) {
+          return getItem(_apps[position]);
+        });
   }
 
   getItem(var app) {

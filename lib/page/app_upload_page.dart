@@ -188,7 +188,8 @@ class _AppUploadState extends State<AppUploadPage> {
       ..type = 'file'
       ..accept = 'image/*';
     input.onChange.listen((e) async {
-      final List<File> files = input.files;
+      var i = e.target as InputElement;
+      final List<File> files = i.files;
       if (files == null || files.length == 0) {
         return;
       }
@@ -197,8 +198,8 @@ class _AppUploadState extends State<AppUploadPage> {
       reader.onError.listen((error) => print(error.toString()));
       await reader.onLoad.first;
       //completer.complete(input.value);
-      _icon = input.files[0];
       setState(() {
+        _icon = files[0];
         try {
           _iconData = new Uint8List.fromList(reader.result);
         } catch (ex) {
@@ -216,11 +217,11 @@ class _AppUploadState extends State<AppUploadPage> {
       ..type = 'file'
       ..accept = 'application/vnd.android.package-archive/*';
     input.onChange.listen((e) {
-      var i =e.target as InputElement;
-      if (i.files==null){
-          return;
+      var i = e.target as InputElement;
+      if (i.files == null) {
+        return;
       }
-      var files=i.files;
+      var files = i.files;
       if (files.length > 0) {
         var file = files[0];
         if (!file.name.endsWith('.apk')) {
@@ -228,7 +229,7 @@ class _AppUploadState extends State<AppUploadPage> {
           return;
         }
         setState(() {
-          print('select : ${input.files[0].name}');
+          print('select : ${file.name}');
           _apk = file;
         });
       }
