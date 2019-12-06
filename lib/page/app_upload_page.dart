@@ -215,15 +215,21 @@ class _AppUploadState extends State<AppUploadPage> {
     input
       ..type = 'file'
       ..accept = 'application/vnd.android.package-archive/*';
-    input.onChange.listen((e) async {
-      if (input.files.length > 0) {
-        var file = input.files[0];
+    input.onChange.listen((e) {
+      var i =e.target as InputElement;
+      if (i.files==null){
+          return;
+      }
+      var files=i.files;
+      if (files.length > 0) {
+        var file = files[0];
         if (!file.name.endsWith('.apk')) {
           Toast.toast(context, 'selected file is not an APK.');
           return;
         }
         setState(() {
-          _apk = input.files[0];
+          print('select : ${input.files[0].name}');
+          _apk = file;
         });
       }
     });

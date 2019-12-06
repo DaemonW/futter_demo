@@ -106,11 +106,17 @@ class _AppPageState extends State<AppPage> {
   }
 
   goAppUploadPage() async {
-    final ApkRes selectApk = await Navigator.of(context).push(PageRouteBuilder(
-        opaque: false,
-        pageBuilder: (context, animation, secondaryAnimation) {
+    // final ApkRes selectApk = await Navigator.of(context).push(PageRouteBuilder(
+    //     opaque: false,
+    //     pageBuilder: (context, animation, secondaryAnimation) {
+    //       return AppDialog();
+    //     }));
+
+    final ApkRes selectApk = await showDialog(
+        context: context,
+        builder: (c) {
           return AppDialog();
-        }));
+        });
     if (selectApk != null) {
       print('select apk: ${selectApk.apkFile.name}');
       if (selectApk.name == null || selectApk.name.isEmpty) {
