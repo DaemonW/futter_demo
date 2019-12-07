@@ -61,6 +61,7 @@ class HttpUtil {
   /// upload multipart data to a server
   static Future<MsgResponse> httpUploadMultiPartFileData(
       final String url,
+      final String method,
       Map<String, String> headers,
       Map<String, String> formParams,
       final List<FilePart> formFiles) async {
@@ -79,78 +80,11 @@ class HttpUtil {
     html.HttpRequest resp;
     try {
       resp = await request(url,
-          method: 'POST', requestHeaders: headers, sendData: body);
+          method: method, requestHeaders: headers, sendData: body);
       return new MsgResponse(resp.status, resp.responseText);
     } catch (e) {
       throw e;
     }
-  }
-
-  /// upload multipart data to a server
-  static Future<MsgResponse> httpUploadMultiPartFileData0(
-      final String url,
-      Map<String, String> headers,
-      Map<String, String> formParams,
-      final List<FilePart> formFiles) async {
-    try {
-      var boundary = _boundaryString();
-      if (headers == null) {
-        headers = new Map<String, String>();
-      }
-      String contentType = 'multipart/form-data; boundary=$boundary';
-      headers['Content-Type'] = contentType;
-
-      var bytes = await makeMultipartBody(boundary, formParams, formFiles);
-      await Future.delayed(Duration(seconds: 10)).then((v) {});
-
-      http.Response response =
-          await http.post(url, headers: headers, body: bytes);
-      if (response.statusCode == 200) {
-        return new MsgResponse(response.statusCode, response.body);
-      } else
-        return new MsgResponse(response.statusCode, response.body);
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  static Future<Uint8List> makeMultipartBody(String boundary,
-      Map<String, String> formParams, List<FilePart> formFiles) async {
-    var streamController = new StreamController<List<int>>(sync: true);
-    if (formParams != null) {
-      formParams.forEach((String key, String val) {
-        streamController.add('--$boundary\r\n'.codeUnits);
-        streamController.add(
-            'Content-Disposition: form-data; name="$key"\r\n\r\n'.codeUnits);
-        streamController.add('$val\r\n'.codeUnits);
-      });
-    }
-
-    if (formFiles != null) {
-      for (int i = 0; i < formFiles.length; i++) {
-        FilePart file = formFiles[i];
-        String name = file.file.name;
-        if (name == null) {
-          name = file.name;
-        }
-        streamController.add('--$boundary\r\n'.codeUnits);
-        streamController.add(
-            'Content-Disposition: form-data; name="${file.field}"; filename="$name"\r\n'
-                .codeUnits);
-        streamController
-            .add('Content-Type: ${file.file.type}\r\n\r\n'.codeUnits);
-        final reader = new html.FileReader();
-        reader.readAsArrayBuffer(file.file);
-        reader.onError.listen((error) => print(error.toString()));
-        await reader.onLoad.first;
-        List<int> bytes = Uint8List.fromList(reader.result);
-        streamController.add(bytes);
-        streamController.add('\r\n'.codeUnits);
-      }
-    }
-    streamController.add('--$boundary--\r\n'.codeUnits);
-    streamController.close();
-    return new http.ByteStream(streamController.stream).toBytes();
   }
 
   static String randomStr(int len) {
@@ -161,14 +95,6 @@ class HttpUtil {
       bytes[i] = alphabet.codeUnitAt(Random().nextInt(alphabet.length));
     }
     return new String.fromCharCodes(bytes);
-  }
-
-  static const int _BOUNDARY_LENGTH = 48;
-
-  static String _boundaryString() {
-    var prefix = "---DartFormBoundary";
-    var boundary = randomStr(_BOUNDARY_LENGTH);
-    return "$prefix$boundary";
   }
 
   static bool isEmptyStr(String str) {

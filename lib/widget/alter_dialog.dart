@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 ///自定义Dialog
-class CustomDialog extends StatefulWidget {
+class MyAlertDialog extends StatefulWidget {
 
   //------------------不带图片的dialog------------------------
   final String title; //弹窗标题
@@ -19,7 +19,7 @@ class CustomDialog extends StatefulWidget {
   final String image;//dialog添加图片
   final String imageHintText; //图片下方的文本提示
 
-  const CustomDialog({Key key, this.title, this.content, this.confirmContent, this.confirmTextColor, this.isCancel = true, this.confirmColor, this.cancelColor, this.outsideDismiss = true, this.confirmCallback, this.dismissCallback, this.image, this.imageHintText}) : super(key: key);
+  const MyAlertDialog({Key key, this.title, this.content, this.confirmContent, this.confirmTextColor, this.isCancel = true, this.confirmColor, this.cancelColor, this.outsideDismiss = true, this.confirmCallback, this.dismissCallback, this.image, this.imageHintText}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -27,7 +27,7 @@ class CustomDialog extends StatefulWidget {
   }
 }
 
-class _CustomDialogState extends State<CustomDialog> {
+class _CustomDialogState extends State<MyAlertDialog> {
 
   _confirmDialog() {
     _dismissDialog();

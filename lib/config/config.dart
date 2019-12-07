@@ -30,4 +30,8 @@ class Config {
   String get endPointDownloads {
     return 'http://$_host:$_port/api/resource/app/downloads';
   }
+
+  String get endPointOperateApp {
+    return 'http://$_host:$_port/api/admin/app';
+  }
 }

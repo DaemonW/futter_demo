@@ -61,6 +61,8 @@ flutter:
   assets:
     - images/
     - images/app_store.png
+    - images/more_v.png
+    - images/encrypted.png
     - images/app_store1.png
     - images/default_pic.png
     - images/icon_default.png

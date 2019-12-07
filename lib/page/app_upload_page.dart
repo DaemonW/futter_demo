@@ -23,8 +23,8 @@ class _AppUploadState extends State<AppUploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar:
-            AppBar(title: Text('Upload App'), automaticallyImplyLeading: false),
+        // appBar:
+        //     AppBar(title: Text('Upload App'), automaticallyImplyLeading: false),
         body: pageContent());
   }
 
