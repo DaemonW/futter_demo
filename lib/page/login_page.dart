@@ -3,6 +3,7 @@ import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/page/apps_page.dart';
+import 'package:flutter_app/util/http_util.dart';
 import 'package:flutter_app/widget/toast.dart' as toast;
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:http/http.dart' as http;
@@ -140,7 +141,6 @@ class _LoginPageState extends State<LoginPage> {
               ///只有输入的内容符合要求通过才会到达此处
               _formKey.currentState.save();
               //TODO 执行登录方法
-              print('username:$_username , password:$_password');
               doLogin(_username, _password);
             }
           },
@@ -154,22 +154,25 @@ class _LoginPageState extends State<LoginPage> {
     try {
       Map<String, String> header = {"Content-Type": "application/json"};
       var content = json.encode({"username": username, "password": password});
-      final resp = await http.post(
+      final resp = await HttpUtil.request(
         Config.getInstance().endPointLogin,
-        body: content,
-        headers: header,
+        method: 'POST',
+        sendData: content,
+        requestHeaders: header,
       );
-      if (resp.statusCode == 200) {
+      //print(resp.responseText);
+      var data = json.decode(resp.responseText);
+      if (resp.status == 200) {
+        var result = data['result'];
+        var token = result['token'];
         Storage storge = window.localStorage;
-        storge['token'] = 'a123456';
+        storge['token'] = token;
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) {
           return AppPage();
         }));
       } else {
-        var result = json.decode(resp.body);
-        var errMsg = result['err'];
-        print(errMsg);
+        var errMsg = data['err'];
         toast.Toast.toast(context, errMsg['msg']);
       }
     } catch (ex) {

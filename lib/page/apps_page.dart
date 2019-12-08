@@ -23,6 +23,12 @@ class AppPage extends StatefulWidget {
 }
 
 class _AppPageState extends State<AppPage> {
+  //config param
+  double iconSize = 32;
+  double iconSmall = 15;
+  double fontBig = 14;
+  double fontMid = 13;
+  //var
   List _apps = [];
   bool _loading = false;
   GlobalKey _anchorKey = GlobalKey();
@@ -91,6 +97,12 @@ class _AppPageState extends State<AppPage> {
     }
   }
 
+  refreshUI(){
+    setState(() {
+
+    });
+  }
+
   Future<String> getFile() {
     final completer = new Completer<String>();
     final InputElement input = document.createElement('input');
@@ -149,21 +161,20 @@ class _AppPageState extends State<AppPage> {
     Widget icon;
     String iconUrl = app["Icon"];
     DateTime t = DateTime.parse(app['CreateAt']);
-    String appUpdateTime =
-        'update : ${t.year}-${t.month}-${t.day}';
+    String appUpdateTime = 'update : ${t.year}-${t.month}-${t.day}';
     if (iconUrl == null || iconUrl.isEmpty) {
       icon = Image.asset(
         'images/icon_default.png',
-        width: 60.0,
-        height: 60.0,
+        width: iconSize,
+        height: iconSize,
         fit: BoxFit.scaleDown,
       );
     } else {
       var r = HttpUtil.randomStr(8);
       icon = Image.network(
         iconUrl + '&&r=$r',
-        width: 60.0,
-        height: 60.0,
+        width: iconSize,
+        height: iconSize,
         fit: BoxFit.scaleDown,
       );
     }
@@ -176,14 +187,14 @@ class _AppPageState extends State<AppPage> {
               borderRadius: BorderRadius.circular(4.0),
               child: IconButton(
                 icon: icon,
-                iconSize: 60,
+                iconSize: iconSize,
                 onPressed: () {
                   updateIcon(app);
                 },
               )),
           Expanded(
             child: Container(
-              margin: EdgeInsets.only(left: 20.0,right: 20),
+              margin: EdgeInsets.only(left: 10.0, right: 10),
               alignment: Alignment.centerLeft,
               //height: 150.0,
               //child: Center(
@@ -196,7 +207,7 @@ class _AppPageState extends State<AppPage> {
                         app['Name'],
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 20.0,
+                          fontSize: fontBig,
                         ),
                         maxLines: 1,
                       ),
@@ -204,7 +215,7 @@ class _AppPageState extends State<AppPage> {
                         child: Text(
                           appUpdateTime,
                           style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: fontMid,
                           ),
                           textAlign: TextAlign.right,
                           maxLines: 1,
@@ -216,13 +227,13 @@ class _AppPageState extends State<AppPage> {
                     children: <Widget>[
                       Text(
                         'version: ' + app['Version'],
-                        style: TextStyle(fontSize: 16.0),
+                        style: TextStyle(fontSize: fontMid),
                       ),
                       Expanded(
                         child: Text(
-                          'size: '+size.toStringAsFixed(2) + "MB",
+                          'size: ' + size.toStringAsFixed(2) + "MB",
                           textAlign: TextAlign.right,
-                          style: TextStyle(fontSize: 16.0),
+                          style: TextStyle(fontSize: fontMid),
                           maxLines: 1,
                         ),
                       ),
@@ -244,11 +255,17 @@ class _AppPageState extends State<AppPage> {
 
   Widget getEncryptedIcon(bool encrypted) {
     if (encrypted) {
-      return Image.asset('images/encrypted.png',
-          fit: BoxFit.scaleDown, width: 16, height: 16);
+      return SizedBox(
+          width: iconSmall,
+          height: iconSmall,
+          child: Image.asset('images/encrypted.png',
+              fit: BoxFit.scaleDown, width: iconSmall, height: iconSmall));
     }
     {
-      return SizedBox();
+      return SizedBox(
+        width: iconSmall,
+        height: iconSmall,
+      );
     }
   }
 
@@ -351,7 +368,8 @@ class _AppPageState extends State<AppPage> {
           params,
           null);
       if (resp.statusCode == 200) {
-        loadData();
+        app['Name']=newName;
+        refreshUI();
         Toast.toast(context, "rename success");
       }
     } catch (e) {
@@ -371,7 +389,8 @@ class _AppPageState extends State<AppPage> {
           params,
           null);
       if (resp.statusCode == 200) {
-        loadData();
+        app['Encrypted']=enable;
+        refreshUI();
         Toast.toast(context, "update status success");
       }
     } catch (e) {
