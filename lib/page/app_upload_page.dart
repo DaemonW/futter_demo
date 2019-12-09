@@ -224,10 +224,10 @@ class _AppUploadState extends State<AppUploadPage> {
       var files = i.files;
       if (files.length > 0) {
         var file = files[0];
-        if (!file.name.endsWith('.apk')) {
-          Toast.toast(context, 'selected file is not an APK.');
-          return;
-        }
+        // if (!file.name.endsWith('.apk')) {
+        //   Toast.toast(context, 'selected file is not an APK.');
+        //   return;
+        // }
         setState(() {
           print('select : ${file.name}');
           _apk = file;

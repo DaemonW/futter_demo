@@ -161,7 +161,7 @@ class _AppPageState extends State<AppPage> {
     Widget icon;
     String iconUrl = app["Icon"];
     DateTime t = DateTime.parse(app['CreateAt']);
-    String appUpdateTime = 'update : ${t.year}-${t.month}-${t.day}';
+    String appUpdateTime = '${t.year}-${t.month}-${t.day}';
     if (iconUrl == null || iconUrl.isEmpty) {
       icon = Image.asset(
         'images/icon_default.png',
@@ -226,12 +226,12 @@ class _AppPageState extends State<AppPage> {
                   Row(
                     children: <Widget>[
                       Text(
-                        'version: ' + app['Version'],
+                        app['Version'],
                         style: TextStyle(fontSize: fontMid),
                       ),
                       Expanded(
                         child: Text(
-                          'size: ' + size.toStringAsFixed(2) + "MB",
+                          size.toStringAsFixed(2) + "MB",
                           textAlign: TextAlign.right,
                           style: TextStyle(fontSize: fontMid),
                           maxLines: 1,
