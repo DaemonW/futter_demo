@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/page/splash_page.dart';
+import 'package:VirtualStore/page/splash_page.dart';
 
 void main() => runApp(new MyApp());
 

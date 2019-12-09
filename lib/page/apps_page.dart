@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/event/even_bus.dart';
-import 'package:flutter_app/page/apk_res.dart';
-import 'package:flutter_app/page/app_dialog.dart';
-import 'package:flutter_app/page/app_upload_page.dart';
-import 'package:flutter_app/util/http_util.dart';
-import 'package:flutter_app/widget/alter_dialog.dart';
-import 'package:flutter_app/widget/edit_dialog.dart';
-import 'package:flutter_app/widget/loading_dialog.dart';
-import 'package:flutter_app/widget/toast.dart';
+import 'package:VirtualStore/event/even_bus.dart';
+import 'package:VirtualStore/page/apk_res.dart';
+import 'package:VirtualStore/page/app_dialog.dart';
+import 'package:VirtualStore/page/app_upload_page.dart';
+import 'package:VirtualStore/util/http_util.dart';
+import 'package:VirtualStore/widget/alter_dialog.dart';
+import 'package:VirtualStore/widget/edit_dialog.dart';
+import 'package:VirtualStore/widget/loading_dialog.dart';
+import 'package:VirtualStore/widget/toast.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'dart:html';
 import 'dart:async';
-import 'package:flutter_app/config/config.dart';
+import 'package:VirtualStore/config/config.dart';
 
 class AppPage extends StatefulWidget {
   @override

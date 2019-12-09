@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_app/page/apk_res.dart';
-import 'package:flutter_app/widget/toast.dart';
+import 'package:VirtualStore/page/apk_res.dart';
+import 'package:VirtualStore/widget/toast.dart';
 
 class AppUploadPage extends StatefulWidget {
   @override

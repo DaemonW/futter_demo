@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/page/apps_page.dart';
-import 'package:flutter_app/util/http_util.dart';
-import 'package:flutter_app/widget/toast.dart' as toast;
+import 'package:VirtualStore/page/apps_page.dart';
+import 'package:VirtualStore/util/http_util.dart';
+import 'package:VirtualStore/widget/toast.dart' as toast;
 import 'package:groovin_material_icons/groovin_material_icons.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_app/config/config.dart';
+import 'package:VirtualStore/config/config.dart';
 
 class LoginPage extends StatefulWidget {
   @override

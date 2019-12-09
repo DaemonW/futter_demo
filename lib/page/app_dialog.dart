@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/page/app_upload_page.dart';
+import 'package:VirtualStore/page/app_upload_page.dart';
 
 class AppDialog extends Dialog {
   @override
