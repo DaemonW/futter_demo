@@ -33,12 +33,11 @@ class _AppUploadState extends State<AppUploadPage> {
       child: Container(
         alignment: Alignment.center,
         decoration: ShapeDecoration(
-            //color: Color(0xFFFFFFFF),
+            color: Color(0xFFFFFFFF),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
           Radius.circular(8.0),
         ))),
-        margin: const EdgeInsets.all(12.0),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

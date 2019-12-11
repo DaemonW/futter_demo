@@ -8,20 +8,19 @@ class AppDialog extends Dialog {
       //创建透明层
       type: MaterialType.transparency, //透明类型
       child: Center(
-        child: Container(
-          alignment: Alignment.center,
-          width: 400,
-          height: 300,
-          decoration: ShapeDecoration(
-              color: Color(0xFFFFFFFF),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                Radius.circular(8.0),
-              ))),
-          //margin: const EdgeInsets.all(12.0),
-          child: AppUploadPage()
+          child: Container(
+        alignment: Alignment.center,
+        constraints: BoxConstraints(maxHeight: 400, maxWidth: 500),
+        decoration: BoxDecoration(
+            color: Color(0xFFFFFFFF),
+            borderRadius: BorderRadius.circular(5.0)),
+        //margin: const EdgeInsets.all(12.0),
+        //child: AppUploadPage()),
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: AppUploadPage(),
         ),
-      ),
+      )),
     );
   }
 }

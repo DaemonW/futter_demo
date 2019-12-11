@@ -183,6 +183,7 @@ class _CustomDialogState extends State<MyEditDialog> {
             type: MaterialType.transparency,
             child: Center(
               child: Container(
+                constraints: BoxConstraints(maxWidth: 400),
                 width: widget.image == null ? width - 100.0 : width - 150.0,
                 height: 150.0,
                 alignment: Alignment.center,
