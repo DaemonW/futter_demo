@@ -15,6 +15,8 @@ import 'dart:html';
 import 'dart:async';
 import 'package:VirtualStore/config/config.dart';
 
+import 'app_info_page.dart';
+
 class AppPage extends StatefulWidget {
   @override
   _AppPageState createState() {
@@ -46,7 +48,10 @@ class _AppPageState extends State<AppPage> {
         title: Text("全部应用"),
       ),
       body: Center(
-        child: getBody(),
+        child: Container(
+          //constraints: BoxConstraints(maxWidth: 900),
+          child: getBody(),
+        ),
       ),
       floatingActionButton: new Builder(builder: (BuildContext context) {
         return new FloatingActionButton(
@@ -97,10 +102,8 @@ class _AppPageState extends State<AppPage> {
     }
   }
 
-  refreshUI(){
-    setState(() {
-
-    });
+  refreshUI() {
+    setState(() {});
   }
 
   Future<String> getFile() {
@@ -149,7 +152,6 @@ class _AppPageState extends State<AppPage> {
 
   getBody() {
     return Container(
-        //margin: EdgeInsets.only(left: 50, right: 50),
         child: ListView.builder(
             itemCount: _apps.length,
             itemBuilder: (BuildContext context, int position) {
@@ -249,7 +251,15 @@ class _AppPageState extends State<AppPage> {
       ),
     );
     return Card(
-      child: row,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        child: row,
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return AppInfoPage(app);
+          }));
+        },
+      ),
     );
   }
 
@@ -368,7 +378,7 @@ class _AppPageState extends State<AppPage> {
           params,
           null);
       if (resp.statusCode == 200) {
-        app['Name']=newName;
+        app['Name'] = newName;
         refreshUI();
         Toast.toast(context, "rename success");
       }
@@ -389,7 +399,7 @@ class _AppPageState extends State<AppPage> {
           params,
           null);
       if (resp.statusCode == 200) {
-        app['Encrypted']=enable;
+        app['Encrypted'] = enable;
         refreshUI();
         Toast.toast(context, "update status success");
       }

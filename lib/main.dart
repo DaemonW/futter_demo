@@ -1,3 +1,4 @@
+import 'package:VirtualStore/page/app_info_page.dart';
 import 'package:flutter/material.dart';
 import 'package:VirtualStore/page/splash_page.dart';
 
@@ -9,9 +10,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return new MaterialApp(
-      title: 'VirtualStore',
-      home:SplashPage()
-    );
+    return new MaterialApp(title: 'VirtualStore', home: SplashPage());
   }
 }

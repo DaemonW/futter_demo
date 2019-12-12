@@ -34,4 +34,8 @@ class Config {
   String get endPointOperateApp {
     return 'http://$_host:$_port/api/admin/app';
   }
+
+    String get endPointAppInfo {
+    return 'http://$_host:$_port/api/app/detail';
+  }
 }
