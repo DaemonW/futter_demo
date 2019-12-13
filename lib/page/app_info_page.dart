@@ -44,14 +44,26 @@ class _AppInfoPageState extends State<AppInfoPage> {
     if (_appInfo == null) {
       return Container(
         alignment: Alignment.center,
-        child: Text('App Information hasn\'t been added yet'),
+        child: Container(
+          alignment: Alignment.center,
+          width: double.infinity,
+          height: double.infinity,
+          constraints: BoxConstraints(maxWidth: 900),
+          decoration: BoxDecoration(
+            color: Color(0xffffffff),
+          ),
+          child: Text('App Information hasn\'t been added yet'),
+        ),
       );
     } else {
-      return Container(
-        alignment: Alignment.topCenter,
-        child: SingleChildScrollView(
+      return SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.topCenter,
           child: Container(
               constraints: BoxConstraints(maxWidth: 900),
+              decoration: BoxDecoration(
+                color: Color(0xffffffff),
+              ),
               child: Column(
                 children: <Widget>[
                   buildHeader(),
@@ -68,18 +80,19 @@ class _AppInfoPageState extends State<AppInfoPage> {
     Widget icon;
     String iconUrl = widget._app['Icon'];
     if (iconUrl.isEmpty) {
-      icon = Image.asset('images/icon_default.png', fit: BoxFit.scaleDown);
+      icon = Image.asset('images/icon_default.png', fit: BoxFit.contain);
     } else {
-      icon = Image.network(iconUrl, fit: BoxFit.scaleDown);
+      icon = Image.network(iconUrl, fit: BoxFit.contain);
     }
     return Container(
       constraints: BoxConstraints(maxWidth: 800),
-      margin: EdgeInsets.only(top: 20),
-      child: Center(
+      margin: EdgeInsets.only(top: 30),
+      child: Container(
+        alignment: Alignment.centerLeft,
         child: Row(
           children: <Widget>[
             IconButton(
-              iconSize: 48,
+              iconSize: 60,
               icon: icon,
               onPressed: () {},
             ),
@@ -88,6 +101,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Text('${widget._app['Name']}'),
                 Text('${_appInfo['Vendor']}'),
@@ -109,7 +123,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
           children: <Widget>[
             Container(
               constraints: BoxConstraints(maxWidth: 800),
-              margin: EdgeInsets.only(left: 10, right: 10),
+              margin: EdgeInsets.only(left: 20, right: 20),
               alignment: Alignment.centerLeft,
               child: Text(
                 '图片详情',
@@ -142,7 +156,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
   Widget buildDescription() {
     return Container(
         constraints: BoxConstraints(maxWidth: 800),
-        margin: EdgeInsets.only(top: 40, left: 10, right: 10),
+        margin: EdgeInsets.only(top: 40, bottom: 40, left: 20, right: 20),
         alignment: Alignment.centerLeft,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

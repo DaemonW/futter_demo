@@ -49,6 +49,9 @@ class _AppPageState extends State<AppPage> {
       ),
       body: Center(
         child: Container(
+          decoration: BoxDecoration(
+            color: Color(0xffefefef),
+          ),
           //constraints: BoxConstraints(maxWidth: 900),
           child: getBody(),
         ),
