@@ -1,6 +1,7 @@
 import 'dart:html';
 import 'dart:typed_data';
 
+import 'package:VirtualStore/model/key_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:VirtualStore/page/apk_res.dart';
@@ -15,11 +16,30 @@ class AppUploadPage extends StatefulWidget {
 }
 
 class _AppUploadState extends State<AppUploadPage> {
+  static List<KeyValueItem> Categories = [
+    KeyValueItem('实用工具', '0'),
+    KeyValueItem('影音视听', '1'),
+    KeyValueItem('聊天社交', '2'),
+    KeyValueItem('图书阅读', '3'),
+    KeyValueItem('学习教育', '4'),
+    KeyValueItem('时尚购物', '5'),
+    KeyValueItem('旅行交通', '6'),
+    KeyValueItem('摄影摄像', '7'),
+    KeyValueItem('新闻资讯', '8'),
+    KeyValueItem('居家生活', '9'),
+    KeyValueItem('效率办公', '10'),
+    KeyValueItem('医疗健康', '11'),
+    KeyValueItem('体育运动', '12'),
+    KeyValueItem('游戏娱乐', '13'),
+  ];
   String _appName = '';
   File _apk;
   File _icon;
   Uint8List _iconData;
   bool _encrypted = false;
+  KeyValueItem _category;
+  List<String> _countries = [];
+  List<String> _languages = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,8 +56,8 @@ class _AppUploadState extends State<AppUploadPage> {
             color: Color(0xFFFFFFFF),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
-          Radius.circular(8.0),
-        ))),
+              Radius.circular(8.0),
+            ))),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -46,10 +66,10 @@ class _AppUploadState extends State<AppUploadPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    width: 100,
+                    width: 200,
                     height: 30,
                     alignment: Alignment.center,
-                    child: Text('App Name: '),
+                    child: Text('应用名称: '),
                   ),
                   Container(
                     width: 200,
@@ -63,15 +83,11 @@ class _AppUploadState extends State<AppUploadPage> {
                   ),
                 ],
               ),
-              SizedBox(
-                width: 300,
-                height: 10,
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    width: 100,
+                    width: 200,
                     height: 60,
                     alignment: Alignment.center,
                     child: getIcon(),
@@ -94,24 +110,54 @@ class _AppUploadState extends State<AppUploadPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    width: 100,
-                    height: 60,
-                    alignment: Alignment.center,
-                    child: Text('Encrypted App'),
-                  ),
-                  Container(
                     width: 200,
-                    height: 60,
                     alignment: Alignment.center,
-                    child: Checkbox(
-                      value: _encrypted,
-                      onChanged: (v) {
-                        setState(() {
-                          _encrypted = v;
-                        });
-                      },
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.center,
+                          child: Text('应用加密'),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          child: Checkbox(
+                            value: _encrypted,
+                            onChanged: (v) {
+                              setState(() {
+                                _encrypted = v;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  SizedBox(
+                      width: 200,
+                      child: DropdownButton(
+                        value: _category,
+                        elevation: 16,
+                        hint: Text('应用分类'),
+                        //style: TextStyle(color: Colors.deepPurple),
+                        underline: Container(
+                          width: 0,
+                          height: 0,
+                        ),
+                        onChanged: (KeyValueItem newValue) {
+                          setState(
+                            () {
+                              _category = newValue;
+                            },
+                          );
+                        },
+                        items: Categories.map<DropdownMenuItem<KeyValueItem>>(
+                            (KeyValueItem item) {
+                          return DropdownMenuItem<KeyValueItem>(
+                            value: item,
+                            child: Text(item.key),
+                          );
+                        }).toList(),
+                      ))
                 ],
               ),
               Row(
@@ -122,7 +168,7 @@ class _AppUploadState extends State<AppUploadPage> {
                     height: 30,
                     alignment: Alignment.center,
                     child: RaisedButton(
-                      child: Text('Cancel'),
+                      child: Text('取消'),
                       onPressed: () {
                         Navigator.of(context).pop(null);
                       },
@@ -133,7 +179,7 @@ class _AppUploadState extends State<AppUploadPage> {
                     height: 30,
                     alignment: Alignment.center,
                     child: RaisedButton(
-                      child: Text('Confirm'),
+                      child: Text('确定'),
                       onPressed: () {
                         checkSelect();
                       },
@@ -150,9 +196,15 @@ class _AppUploadState extends State<AppUploadPage> {
 
   Widget getApkFileName() {
     if (_apk == null) {
-      return Text('Choose Apk');
+      return Text('选择应用');
     }
-    return Text(_apk.name);
+    return SizedBox(
+      width: 100,
+      child: Text(
+        _apk.name,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
   }
 
   Widget getIcon() {

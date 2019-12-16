@@ -42,9 +42,6 @@ class _LoginPageState extends State<LoginPage> {
             child: Center(
                 child: Container(
                     constraints: BoxConstraints(maxWidth: 600),
-                    decoration: BoxDecoration(
-                      color: Color(0xffffffff),
-                    ),
                     child: ListView(
                       padding: EdgeInsets.symmetric(horizontal: 22.0),
                       children: <Widget>[
