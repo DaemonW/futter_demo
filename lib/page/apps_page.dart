@@ -304,17 +304,17 @@ class _AppPageState extends State<AppPage> {
         list.add(
           PopupMenuItem(
             value: '1',
-            child: Text('rename'),
+            child: Text('重命名'),
           ),
         );
 
         list.add(
           PopupMenuItem(
             value: '2',
-            child: Text('delete'),
+            child: Text('删除'),
           ),
         );
-        var t = encrypted ? 'unencrypt' : 'encrypt';
+        var t = encrypted ? '取消加密' : '加密';
         list.add(
           PopupMenuItem(
             value: '3',
@@ -332,7 +332,7 @@ class _AppPageState extends State<AppPage> {
         barrierDismissible: true,
         builder: (c) {
           return MyAlertDialog(
-            content: 'Are you sure to delete app?',
+            content: '确定删除应用?',
             confirmCallback: () {
               deleteApp(app);
             },
@@ -347,7 +347,7 @@ class _AppPageState extends State<AppPage> {
           method: 'DELETE');
       if (resp.status == 200) {
         loadData();
-        Toast.toast(context, "delete success");
+        Toast.toast(context, "删除成功");
       }
     } catch (e) {
       print('err: ' + e.toString());
@@ -361,7 +361,7 @@ class _AppPageState extends State<AppPage> {
         barrierDismissible: true,
         builder: (c) {
           return MyEditDialog(
-            title: 'New App Name',
+            title: '新应用名',
             initialContent: originName,
             confirmCallback: (v) {
               renameApp(app, v);
@@ -383,7 +383,7 @@ class _AppPageState extends State<AppPage> {
       if (resp.statusCode == 200) {
         app['Name'] = newName;
         refreshUI();
-        Toast.toast(context, "rename success");
+        Toast.toast(context, "更改成功");
       }
     } catch (e) {
       print('err: ' + e.toString());
@@ -404,7 +404,7 @@ class _AppPageState extends State<AppPage> {
       if (resp.statusCode == 200) {
         app['Encrypted'] = enable;
         refreshUI();
-        Toast.toast(context, "update status success");
+        Toast.toast(context, "更新成功");
       }
     } catch (e) {
       print('err: ' + e.toString());
@@ -435,7 +435,7 @@ class _AppPageState extends State<AppPage> {
             formFiles);
         if (resp.statusCode == 200) {
           loadData();
-          Toast.toast(context, "update success");
+          Toast.toast(context, "更新成功");
         } else {
           var content = json.decode(resp.data);
           var err = content['err'];
@@ -466,7 +466,7 @@ class _AppPageState extends State<AppPage> {
           formParams,
           formFiles);
       if (resp.statusCode == 200) {
-        uploadResult = 'upload app success';
+        uploadResult = '上传成功';
         loadData();
       } else {
         var content = json.decode(resp.data);

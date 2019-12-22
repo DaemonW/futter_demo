@@ -1,6 +1,6 @@
 class Config {
   static Config _instance;
-  String _host = '192.168.21.41';
+  String _host = '192.168.3.15';
   int _port = 8080;
   String _uuid = '123';
 

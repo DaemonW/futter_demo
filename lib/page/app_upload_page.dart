@@ -75,10 +75,13 @@ class _AppUploadState extends State<AppUploadPage> {
                     width: 200,
                     height: 30,
                     alignment: Alignment.center,
-                    child: TextField(
-                      onChanged: (String value) => _appName = value,
-                      controller: TextEditingController.fromValue(
-                          TextEditingValue(text: _appName)),
+                    child: SizedBox(
+                      width: 150,
+                      child: TextField(
+                        onChanged: (String value) => _appName = value,
+                        controller: TextEditingController.fromValue(
+                            TextEditingValue(text: _appName)),
+                      ),
                     ),
                   ),
                 ],
@@ -113,6 +116,8 @@ class _AppUploadState extends State<AppUploadPage> {
                     width: 200,
                     alignment: Alignment.center,
                     child: Row(
+                      mainAxisSize:MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         Container(
                           alignment: Alignment.center,
@@ -132,8 +137,9 @@ class _AppUploadState extends State<AppUploadPage> {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  Container(
                       width: 200,
+                      alignment: Alignment.center,
                       child: DropdownButton(
                         value: _category,
                         elevation: 16,
@@ -164,7 +170,7 @@ class _AppUploadState extends State<AppUploadPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    width: 100,
+                    width: 200,
                     height: 30,
                     alignment: Alignment.center,
                     child: RaisedButton(
