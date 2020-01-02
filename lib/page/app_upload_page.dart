@@ -116,7 +116,7 @@ class _AppUploadState extends State<AppUploadPage> {
                     width: 200,
                     alignment: Alignment.center,
                     child: Row(
-                      mainAxisSize:MainAxisSize.min,
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         Container(
@@ -286,7 +286,7 @@ class _AppUploadState extends State<AppUploadPage> {
         //   return;
         // }
         setState(() {
-          print('select : ${file.name}');
+          //print('select : ${file.name}');
           _apk = file;
         });
       }

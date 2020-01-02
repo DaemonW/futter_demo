@@ -1,6 +1,6 @@
 class Config {
   static Config _instance;
-  String _host = '192.168.3.15';
+  String _host = '150.109.41.77';
   int _port = 8080;
   String _uuid = '123';
 
@@ -17,6 +17,10 @@ class Config {
 
   String get endPointManageApp {
     return 'http://$_host:$_port/api/admin/apps';
+  }
+
+    String get endPointUserInfo {
+    return 'http://$_host:$_port/api/user';
   }
 
   String get endPointQueryApps {
