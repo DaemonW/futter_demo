@@ -342,9 +342,14 @@ class _AppPageState extends State<AppPage> {
 
   deleteApp(var app) async {
     try {
+      Storage storage = window.localStorage;
+      String token = storage['token'];
+      var headers = Map<String, String>();
+      headers['Authorization'] = token;
       HttpRequest resp = await HttpUtil.request(
           Config.getInstance().endPointOperateApp + '/${app['Id']}',
-          method: 'DELETE');
+          method: 'DELETE',
+          requestHeaders: headers);
       if (resp.status == 200) {
         loadData();
         Toast.toast(context, "删除成功");
@@ -374,10 +379,14 @@ class _AppPageState extends State<AppPage> {
     try {
       var id = app['Id'];
       Map<String, String> params = {'name': newName};
+      Storage storage = window.localStorage;
+      String token = storage['token'];
+      var headers = Map<String, String>();
+      headers['Authorization'] = token;
       MsgResponse resp = await HttpUtil.httpUploadMultiPartFileData(
           Config.getInstance().endPointOperateApp + '/$id?scope=name',
           "PUT",
-          null,
+          headers,
           params,
           null);
       if (resp.statusCode == 200) {
@@ -395,10 +404,14 @@ class _AppPageState extends State<AppPage> {
       var id = app['Id'];
       var encrypted = enable ? '1' : '0';
       Map<String, String> params = {'encrypted': encrypted};
+      Storage storage = window.localStorage;
+      String token = storage['token'];
+      var headers = Map<String, String>();
+      headers['Authorization'] = token;
       MsgResponse resp = await HttpUtil.httpUploadMultiPartFileData(
           Config.getInstance().endPointOperateApp + '/$id?scope=encrypted',
           "PUT",
-          null,
+          headers,
           params,
           null);
       if (resp.statusCode == 200) {
@@ -425,12 +438,16 @@ class _AppPageState extends State<AppPage> {
       print('select icon');
       List<FilePart> formFiles =
           List.from([FilePart('icon', app['Name'], files[0])]);
+      Storage storage = window.localStorage;
+      String token = storage['token'];
+      var headers = Map<String, String>();
+      headers['Authorization'] = token;
       try {
         var id = app['Id'];
         MsgResponse resp = await HttpUtil.httpUploadMultiPartFileData(
             Config.getInstance().endPointOperateApp + '/$id?scope=icon',
             "PUT",
-            null,
+            headers,
             null,
             formFiles);
         if (resp.statusCode == 200) {
@@ -452,6 +469,10 @@ class _AppPageState extends State<AppPage> {
   uploadApp(ApkRes apk) async {
     MsgResponse resp;
     String uploadResult;
+    Storage storage = window.localStorage;
+    String token = storage['token'];
+    var headers = Map<String, String>();
+    headers['Authorization'] = token;
     try {
       Map<String, String> formParams = {
         'name': '${apk.name}',
@@ -462,7 +483,7 @@ class _AppPageState extends State<AppPage> {
       resp = await HttpUtil.httpUploadMultiPartFileData(
           Config.getInstance().endPointManageApp,
           "POST",
-          null,
+          headers,
           formParams,
           formFiles);
       if (resp.statusCode == 200) {
