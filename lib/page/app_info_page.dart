@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:VirtualStore/config/config.dart';
+import 'package:VirtualStore/model/key_value.dart';
+import 'package:VirtualStore/page/app_upload_page.dart';
 import 'package:VirtualStore/widget/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -105,13 +107,29 @@ class _AppInfoPageState extends State<AppInfoPage> {
               children: <Widget>[
                 Text('${widget._app['Name']}'),
                 Text('${_appInfo['Vendor']}'),
-                Text('${_appInfo['Category']}'),
+                getCategory(widget._app['Category']),
               ],
             )
           ],
         ),
       ),
     );
+  }
+
+  Widget getCategory(String category) {
+    String intuitiveCategory = getintuitiveCategory(category);
+    return Text('$intuitiveCategory');
+  }
+
+  String getintuitiveCategory(String category) {
+    int len = AppUploadPage.Categories.length;
+    for (int i = 0; i < len; i++) {
+      KeyValueItem item=AppUploadPage.Categories[i];
+      if (item.key == category) {
+        return item.value;
+      }
+    }
+    return 'Unknown';
   }
 
   Widget buildDetails() {

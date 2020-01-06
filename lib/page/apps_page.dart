@@ -476,7 +476,8 @@ class _AppPageState extends State<AppPage> {
     try {
       Map<String, String> formParams = {
         'name': '${apk.name}',
-        'encrypted': '${apk.encrypted}'
+        'encrypted': '${apk.encrypted}',
+        'category':'${apk.category}'
       };
       List<FilePart> formFiles =
           List.from([FilePart('apk', apk.name, apk.apkFile)]);

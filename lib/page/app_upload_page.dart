@@ -8,6 +8,23 @@ import 'package:VirtualStore/page/apk_res.dart';
 import 'package:VirtualStore/widget/toast.dart';
 
 class AppUploadPage extends StatefulWidget {
+  static final List<KeyValueItem> Categories = [
+    KeyValueItem('0', '实用工具'),
+    KeyValueItem('1', '影音视听'),
+    KeyValueItem('2', '聊天社交'),
+    KeyValueItem('3', '图书阅读'),
+    KeyValueItem('4', '学习教育'),
+    KeyValueItem('5', '时尚购物'),
+    KeyValueItem('6', '旅行交通'),
+    KeyValueItem('7', '摄影摄像'),
+    KeyValueItem('8', '新闻资讯'),
+    KeyValueItem('9', '居家生活'),
+    KeyValueItem('10', '效率办公'),
+    KeyValueItem('11', '医疗健康'),
+    KeyValueItem('12', '体育运动'),
+    KeyValueItem('13', '游戏娱乐'),
+  ];
+
   @override
   _AppUploadState createState() {
     // TODO: implement createState
@@ -16,22 +33,6 @@ class AppUploadPage extends StatefulWidget {
 }
 
 class _AppUploadState extends State<AppUploadPage> {
-  static List<KeyValueItem> Categories = [
-    KeyValueItem('实用工具', '0'),
-    KeyValueItem('影音视听', '1'),
-    KeyValueItem('聊天社交', '2'),
-    KeyValueItem('图书阅读', '3'),
-    KeyValueItem('学习教育', '4'),
-    KeyValueItem('时尚购物', '5'),
-    KeyValueItem('旅行交通', '6'),
-    KeyValueItem('摄影摄像', '7'),
-    KeyValueItem('新闻资讯', '8'),
-    KeyValueItem('居家生活', '9'),
-    KeyValueItem('效率办公', '10'),
-    KeyValueItem('医疗健康', '11'),
-    KeyValueItem('体育运动', '12'),
-    KeyValueItem('游戏娱乐', '13'),
-  ];
   String _appName = '';
   File _apk;
   File _icon;
@@ -156,11 +157,11 @@ class _AppUploadState extends State<AppUploadPage> {
                             },
                           );
                         },
-                        items: Categories.map<DropdownMenuItem<KeyValueItem>>(
+                        items: AppUploadPage.Categories.map<DropdownMenuItem<KeyValueItem>>(
                             (KeyValueItem item) {
                           return DropdownMenuItem<KeyValueItem>(
                             value: item,
-                            child: Text(item.key),
+                            child: Text(item.value),
                           );
                         }).toList(),
                       ))
@@ -304,7 +305,11 @@ class _AppUploadState extends State<AppUploadPage> {
       Toast.toast(context, 'you need to select an apk file!');
       return;
     }
-    ApkRes apk = new ApkRes(_apk, _icon, _appName, _encrypted);
+    if (_category == null) {
+      Toast.toast(context, 'you need to configure app category!');
+      return;
+    }
+    ApkRes apk = new ApkRes(_apk, _icon, _appName, _encrypted, _category.key);
     Navigator.of(context).pop(apk);
   }
 }
